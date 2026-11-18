@@ -1,6 +1,6 @@
 // EVE Kill Tracker: front end. All number crunching happens here in the browser;
 // the Worker only hands over stored hourly/daily snapshots.
-export const APP_VERSION = '2.0.0';
+export const APP_VERSION = '2.0.1';
 const IMG = 'https://images.evetech.net';
 
 // ---------------------------------------------------------------- helpers
@@ -91,7 +91,7 @@ const scopeLabel = () => {
 
 // ---------------------------------------------------------------- data loading
 async function loadHours(n = 24) {
-  state.hours = await api(`/api/hours?n=${n}`);
+  state.hours = await api(`/api/hours?n=${n}`, { cache: 'no-cache' });
   state.hoursN = n;
 }
 async function ensureDays(fromDay) {
@@ -516,7 +516,7 @@ function renderWho() {
 }
 
 async function refresh() {
-  const [meta, sov] = await Promise.all([api('/api/meta'), api('/api/sov')]);
+  const [meta, sov] = await Promise.all([api('/api/meta', { cache: 'no-cache' }), api('/api/sov', { cache: 'no-cache' })]);
   state.meta = meta; state.sov = { systems: {}, alliances: {}, ...sov };
   for (const k of Object.keys(state.sov.systems)) state.sov.systems[k] = Number(state.sov.systems[k]);
   await loadHours();

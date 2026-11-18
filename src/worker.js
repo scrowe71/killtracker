@@ -129,7 +129,7 @@ async function api(req, env, path, fetchImpl) {
   if (path === '/api/hours' && m === 'GET') {
     const n = Math.min(72, Math.max(1, Number(q.get('n')) || 24));
     const { results } = await db.prepare('SELECT hour, taken_at, data FROM (SELECT * FROM hours ORDER BY hour DESC LIMIT ?) ORDER BY hour ASC').bind(n).all();
-    return json(hourRows(results), 200, { 'Cache-Control': 'public, max-age=120' });
+    return json(hourRows(results), 200, { 'Cache-Control': 'no-cache' });
   }
 
   // every hour of one UTC day; past days never change, so they can be cached for good
@@ -150,7 +150,7 @@ async function api(req, env, path, fetchImpl) {
   }
 
   if (path === '/api/sov' && m === 'GET') {
-    return json((await getMeta(db, 'sov')) || '{"updated":null,"systems":{},"alliances":{}}', 200, { 'Cache-Control': 'public, max-age=600' });
+    return json((await getMeta(db, 'sov')) || '{"updated":null,"systems":{},"alliances":{}}', 200, { 'Cache-Control': 'no-cache' });
   }
 
   // ---- logged-in only
