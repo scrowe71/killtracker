@@ -23,7 +23,7 @@ crons = ["*/15 * * * *"]
 [vars]
 # Client ID of the EVE application (developers.eveonline.com). Public value, safe to commit.
 # Callback URL registered there: https://killtracker.crankyape.space/auth/callback
-EVE_CLIENT_ID = "PASTE_EVE_CLIENT_ID_HERE"
+EVE_CLIENT_ID = "65a067b53afc48dc9615d8426460a4b2"
 
 [observability]
 enabled = true
