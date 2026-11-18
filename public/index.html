@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVE Kill Tracker: NPC and ship kills across New Eden</title>
+  <meta name="description" content="Hourly NPC and ship kill statistics for every system in EVE Online, with sovereignty filters and pinned systems.">
+  <meta name="theme-color" content="#0b0f14">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Eve<b>KillTracker</b> <span id="version" class="version"></span></a>
+    <div class="status" id="status" aria-live="polite"></div>
+    <span class="clock" title="EVE time (UTC)"><b id="evetime">--:--</b> EVE</span>
+    <span id="who"></span>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h2>Filters</h2>
+      <label class="field">Region
+        <select id="fRegion"></select>
+      </label>
+      <label class="field">Sovereignty
+        <select id="fSov">
+          <option value="all">All space</option>
+          <option value="held">Held by alliance…</option>
+          <option value="notheld">Not held by alliance…</option>
+          <option value="nosov">No player sovereignty</option>
+        </select>
+      </label>
+      <label class="field" id="allianceBox" hidden>Alliance
+        <input id="fAlliance" list="allianceList" placeholder="Start typing an alliance…" autocomplete="off">
+        <datalist id="allianceList"></datalist>
+      </label>
+      <label class="field">True-sec
+        <select id="fSec">
+          <option value="all">Any</option>
+          <option value="hs">High-sec (0.5 to 1.0)</option>
+          <option value="ls">Low-sec (0.1 to 0.4)</option>
+          <option value="ns">Null-sec (0.0 and below)</option>
+          <option value="wh">Wormholes</option>
+        </select>
+      </label>
+      <button id="fReset" class="link">Reset filters</button>
+      <div class="side-stats" id="sideStats"></div>
+    </aside>
+
+    <main>
+      <nav class="tabs" role="tablist">
+        <button data-tab="live" class="on">Live</button>
+        <button data-tab="reports">Reports</button>
+        <button data-tab="least">Least used</button>
+        <button data-tab="pinned">Pinned <i id="pinCount"></i></button>
+        <button data-tab="data">Data &amp; export</button>
+      </nav>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <div id="toasts"></div>
+  <footer class="foot">Data from CCP's ESI, updated hourly. EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved worldwide. Not affiliated with CCP hf. · <a href="https://crankyape.space/">crankyape.space</a></footer>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# EVE Kill Tracker: Cloudflare Worker config (deployed by Cloudflare from GitHub).
+name = "killtracker"
+main = "src/worker.js"
+compatibility_date = "2025-09-01"
+
+# Static web pages
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api/*", "/auth/*"]
+
+# Database. Create it in Cloudflare (Storage & Databases > D1 > Create, name: killtracker)
+# and paste its Database ID here. Tables are created automatically on first run.
+[[d1_databases]]
+binding = "DB"
+database_name = "killtracker"
+database_id = "PASTE_D1_DATABASE_ID_HERE"
+
+# Check ESI every 15 minutes; a new hour is stored once, as soon as ESI publishes it.
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+# Client ID of the EVE application (developers.eveonline.com). Public value, safe to commit.
+# Callback URL registered there: https://killtracker.crankyape.space/auth/callback
+EVE_CLIENT_ID = "PASTE_EVE_CLIENT_ID_HERE"
+
+[observability]
+enabled = true
