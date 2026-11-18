@@ -102,13 +102,22 @@ async function api(req, env, path, fetchImpl) {
   }
 
   if (path === '/api/meta' && m === 'GET') {
-    const [h, d, last, sovUpd] = await Promise.all([
+    // Empty database (first deploy, or the schedule hasn't fired yet): collect now, at most every 2 minutes.
+    if (!(await getMeta(db, 'last_taken_at'))) {
+      const tried = Number(await getMeta(db, 'auto_poll') || 0);
+      if (Date.now() - tried > 2 * 60e3) {
+        await db.prepare("INSERT INTO meta (key, value) VALUES ('auto_poll', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value").bind(String(Date.now())).run();
+        await scheduled(env, fetchImpl);
+      }
+    }
+    const [h, d, last, sovUpd, lastRun] = await Promise.all([
       db.prepare('SELECT MIN(hour) AS first, MAX(hour) AS last, COUNT(*) AS n FROM hours').first(),
       db.prepare('SELECT MIN(day) AS first, MAX(day) AS last, COUNT(*) AS n FROM days').first(),
-      getMeta(db, 'last_taken_at'), getMeta(db, 'sov_updated'),
+      getMeta(db, 'last_taken_at'), getMeta(db, 'sov_updated'), getMeta(db, 'last_run'),
     ]);
     return json({ first_hour: h.first, last_hour: h.last, hours: h.n, first_day: d.first, last_day: d.last, days: d.n,
-      last_taken_at: last, sov_updated: sovUpd ? Number(sovUpd) : null, retention_days: RETENTION_DAYS }, 200, { 'Cache-Control': 'public, max-age=60' });
+      last_taken_at: last, sov_updated: sovUpd ? Number(sovUpd) : null, retention_days: RETENTION_DAYS,
+      last_run: lastRun ? JSON.parse(lastRun) : null }, 200, { 'Cache-Control': 'no-store' });
   }
 
   if (path === '/api/latest' && m === 'GET') {

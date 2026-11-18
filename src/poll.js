@@ -101,5 +101,6 @@ export async function scheduled(env, fetchImpl = fetch) {
     catch (e) { out.push(`${job.name} failed: ${e.message}`); console.error(job.name, e); }
   }
   console.log(out.join(' | '));
+  try { await setMeta(env.DB, 'last_run', JSON.stringify({ at: new Date().toISOString(), results: out })).run(); } catch { /* best effort */ }
   return out;
 }
