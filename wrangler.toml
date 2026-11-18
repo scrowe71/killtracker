@@ -14,7 +14,7 @@ run_worker_first = ["/api/*", "/auth/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "killtracker"
-database_id = "PASTE_D1_DATABASE_ID_HERE"
+database_id = "255f9bec-e6df-45e5-a97f-e7db98254c9e"
 
 # Check ESI every 15 minutes; a new hour is stored once, as soon as ESI publishes it.
 [triggers]
